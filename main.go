@@ -18,6 +18,6 @@ func main() {
 }
 
 func executeEventRefresh() {
-	gocron.Every(30).Second().Do(services.UpdateDatabase)
+	gocron.Every(6).Hour().Do(services.UpdateDatabase)
 	<-gocron.Start()
 }
