@@ -16,7 +16,7 @@ func main() {
 
 	http.HandleFunc("/", controllers.Health)
 	http.HandleFunc("/getEvents", controllers.GetEvents)
-	http.ListenAndServe(":3000", nil)
+	http.ListenAndServe(":8787", nil)
 
 }
 
