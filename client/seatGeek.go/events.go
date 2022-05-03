@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -18,17 +19,17 @@ const (
 	GEEKPASS = "SeatGeekPass"
 )
 
-func GetEvents(numOfEvent int) *http.Response {
+func GetTopEvents(numOfEvent int) *http.Response {
+
+	log.Print("Retrieving events...")
 	client := &http.Client{Timeout: time.Duration(1) * time.Second}
 
-	req, _ := http.NewRequest("GET", seatGeekAPI+eventsEnp+"?per_page=100", nil)
+	req, _ := http.NewRequest("GET", seatGeekAPI+eventsEnp+"?sort=score.desc&score.gt=0.90&per_page="+strconv.Itoa(numOfEvent), nil)
 	req.SetBasicAuth(os.Getenv(GEEKUSER), os.Getenv(GEEKPASS))
 	resp, doErr := client.Do(req)
 	if doErr != nil {
 		log.Print("Error to seatGeek: ", doErr)
 	}
-
-	defer resp.Body.Close()
 
 	return resp
 }
