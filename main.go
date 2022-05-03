@@ -14,8 +14,9 @@ func main() {
 	log.Print("Server started...")
 	go executeEventRefresh()
 
+	http.HandleFunc("/", controllers.Health)
 	http.HandleFunc("/getEvents", controllers.GetEvents)
-	http.ListenAndServe(":8081", nil)
+	http.ListenAndServe(":8080", nil)
 
 }
 

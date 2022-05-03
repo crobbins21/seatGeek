@@ -9,6 +9,7 @@ import (
 )
 
 func PostEvents(events []interface{}) {
+	log.Print("Posting events in the database...")
 	ctx := context.Background()
 	dbConnection := MongoClient()
 
@@ -24,6 +25,7 @@ func PostEvents(events []interface{}) {
 }
 
 func DeleteEvents(identifier string, events []int) {
+	log.Print("Deleting events in the database...")
 	ctx := context.Background()
 	dbConnection := MongoClient()
 
@@ -41,6 +43,7 @@ func DeleteEvents(identifier string, events []int) {
 }
 
 func GetEvents() *mongo.Cursor {
+	log.Print("Retrieving events from the database...")
 	ctx := context.Background()
 	dbConnection := MongoClient()
 
