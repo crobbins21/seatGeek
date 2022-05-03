@@ -4,9 +4,14 @@ import (
 	"context"
 	"log"
 	"reflect"
+	"time"
 
 	mongoDB "github.com/crobbins21/seatGeek.git/client/mongo.go"
 	"github.com/crobbins21/seatGeek.git/models"
+)
+
+const (
+	dateFormat = " 01-02-2006"
 )
 
 func UpdateDatabase() {
@@ -18,8 +23,7 @@ func UpdateDatabase() {
 	oldEventsMap := arrayToMap(oldEvents)
 	oldEventsP := *oldEventsMap
 
-	// Get events from SG
-	newTopEvents := SeatGeekEvents(10)
+	newTopEvents := SeatGeekEvents(500)
 
 	var eventsToAdd []models.Event
 	for _, event := range newTopEvents {
@@ -27,12 +31,11 @@ func UpdateDatabase() {
 		//New event
 		if _, val := oldEventsP[event.ID]; !val {
 			eventsToAdd = append(eventsToAdd, event)
-			log.Print("New event: ", event)
+			log.Print("New event: ", event.Title)
 
 			// Event already in the db
 		} else {
 			oldEventsP[event.ID] = models.Event{ID: 0}
-			log.Print("Event already in the db: ", event)
 		}
 	}
 
@@ -40,15 +43,19 @@ func UpdateDatabase() {
 	for _, oldEvent := range oldEventsP {
 		if oldEvent.ID != 0 {
 			eventsToRemove = append(eventsToRemove, oldEvent.ID)
-			log.Print("Event to remove: ", oldEvent)
+			log.Print("Event to remove: ", oldEvent.Title)
 		}
 	}
 
-	//Delete all old
-	mongoDB.DeleteEvents("eventId", eventsToRemove)
+	if len(eventsToRemove) == 0 && len(eventsToAdd) == 0 {
+		now := time.Now().Format(time.Kitchen + dateFormat)
+		sixHoursAgo := time.Now().Add(time.Duration(-6) * time.Hour).Format(time.Kitchen + dateFormat)
+		log.Printf("No new top events added from %v till %v", sixHoursAgo, now)
+	} else {
 
-	//Add all new
-	mongoDB.PostEvents(ToInterface(eventsToAdd))
+		mongoDB.DeleteEvents("eventId", eventsToRemove)
+		mongoDB.PostEvents(ToInterface(eventsToAdd))
+	}
 
 }
 

@@ -32,7 +32,7 @@ func DeleteEvents(identifier string, events []int) {
 	dbConnection.Connect(ctx)
 	connection := dbConnection.Database("seatGeek").Collection("events")
 
-	query := bson.M{identifier: bson.M{"$nin": events}}
+	query := bson.M{identifier: bson.M{"$in": events}}
 
 	_, err := connection.DeleteMany(ctx, query)
 	if err != nil {
