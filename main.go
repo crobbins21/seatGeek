@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/crobbins21/seatGeek.git/controllers"
@@ -10,6 +11,7 @@ import (
 
 func main() {
 
+	log.Print("Server started...")
 	go executeEventRefresh()
 
 	http.HandleFunc("/getEvents", controllers.GetEvents)
